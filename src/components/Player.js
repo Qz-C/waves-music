@@ -7,11 +7,9 @@ import {
     faPause
 } from "@fortawesome/free-solid-svg-icons";
 
-const Player = ({ currentSong, isPlaying, setIsPlaying }) => {
+const Player = ({ currentSong, isPlaying, setIsPlaying, audioRef, setSongInfo, songInfo }) => {
 
-    const audioRef = useRef(null);
-
-    const playSongHanler = () => {
+    const playSongHandler = () => {
         if (isPlaying) {
             audioRef.current.pause();
             setIsPlaying(!isPlaying);
@@ -36,11 +34,6 @@ const Player = ({ currentSong, isPlaying, setIsPlaying }) => {
         setSongInfo({ ...songInfo, currentTime: event.target.value });
     }
 
-    const [songInfo, setSongInfo] = useState({
-        currentTime: 0,
-        duration: 0,
-    });
-
     return (
         <div className="player">
             <div className="time-control">
@@ -48,7 +41,7 @@ const Player = ({ currentSong, isPlaying, setIsPlaying }) => {
                 <input
                     onChange={dragHandler}
                     min={0}
-                    max={songInfo.duration}
+                    max={songInfo.duration || 0}
                     value={songInfo.currentTime}
                     type="range"
                 />
@@ -56,15 +49,9 @@ const Player = ({ currentSong, isPlaying, setIsPlaying }) => {
             </div>
             <div className="play-control">
                 <FontAwesomeIcon className="skip-back" icon={faAngleLeft} size="2x" />
-                <FontAwesomeIcon className="play" onClick={playSongHanler} icon={isPlaying ? faPause : faPlay} size="2x" />
+                <FontAwesomeIcon className="play" onClick={playSongHandler} icon={isPlaying ? faPause : faPlay} size="2x" />
                 <FontAwesomeIcon className="skip-forward" icon={faAngleRight} size="2x" />
             </div>
-            <audio
-                onLoadedMetadata={timeUpdateHandler}
-                onTimeUpdate={timeUpdateHandler}
-                ref={audioRef}
-                src={currentSong.audio}>
-            </audio>
         </div>
     )
 }
